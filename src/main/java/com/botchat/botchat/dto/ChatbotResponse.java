@@ -1,14 +1,24 @@
 package com.botchat.botchat.dto;
 
-
 import java.util.Map;
 
 public class ChatbotResponse {
+
     private String message;
     private Map<Integer, String> options;
-    private boolean isInputExpected;
+    private boolean isError;
     private String inputPromptMessage;
+    private String sessionId;  // Novo campo para o UUID da sessão
 
+    public ChatbotResponse(String message, Map<Integer, String> options, boolean isError, String inputPromptMessage, String sessionId) {
+        this.message = message;
+        this.options = options;
+        this.isError = isError;
+        this.inputPromptMessage = inputPromptMessage;
+        this.sessionId = sessionId;  // Inicializa o sessionId
+    }
+
+    // Getters e Setters
     public String getMessage() {
         return message;
     }
@@ -25,12 +35,12 @@ public class ChatbotResponse {
         this.options = options;
     }
 
-    public boolean isInputExpected() {
-        return isInputExpected;
+    public boolean isError() {
+        return isError;
     }
 
-    public void setInputExpected(boolean inputExpected) {
-        isInputExpected = inputExpected;
+    public void setError(boolean error) {
+        isError = error;
     }
 
     public String getInputPromptMessage() {
@@ -41,10 +51,11 @@ public class ChatbotResponse {
         this.inputPromptMessage = inputPromptMessage;
     }
 
-    public ChatbotResponse(String message, Map<Integer, String> options, boolean isInputExpected, String inputPromptMessage) {
-        this.message = message;
-        this.options = options;
-        this.isInputExpected = isInputExpected;
-        this.inputPromptMessage = inputPromptMessage;
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
     }
 }
