@@ -29,11 +29,11 @@ public class ChatbotService {
     private static void initializeConversationFlow() {
         startNode = new Node("Bem-vindo ao nosso chatbot! Sobre o que gostaria de falar hoje?");
 
-        Node option1Node = new Node("Você escolheu a Opção 1! Vamos prosseguir.");
-        Node option2Node = new Node("Você escolheu a Opção 2! Por favor, forneça um CPF.");
-        Node option3Node = new Node("Você escolheu a Opção 3! Por favor, digite seu nome.");
-        Node option4Node = new Node("Você escolheu a Opção 4! Informe sua idade.");
-        Node option5Node = new Node("Você escolheu a Opção 5! Vamos finalizar a conversa.");
+        Node option1Node = new Node("Você escolheu a Opção 1! Por favor, informe seu código de rastreio.");
+        Node option2Node = new Node("Você escolheu a Opção 2! Vamos prosseguir.");
+        Node option3Node = new Node("Você escolheu a Opção 3!");
+        Node option4Node = new Node("Você escolheu a Opção 4!");
+        Node option5Node = new Node("Você escolheu a Opção 5!");
 
         startNode.addOption(1, option1Node);
         startNode.addOption(2, option2Node);
@@ -41,7 +41,7 @@ public class ChatbotService {
         startNode.addOption(4, option4Node);
         startNode.addOption(5, option5Node);
 
-        option2Node.setInputExpected(true, "Informe seu CPF:", input -> input.matches("\\d{11}"));
+        option1Node.setInputExpected(true, "Informe seu CPF:", input -> input.matches("\\d{11}"));
         option3Node.setInputExpected(true, "Informe seu nome:", input -> input.length() > 0);
     }
 
@@ -116,10 +116,7 @@ public class ChatbotService {
                     chatSessionRepository.save(session);
 
                     // Monta as opções para o próximo passo
-                    Map<Integer, String> options = new HashMap<>();
-                    for (Map.Entry<Integer, Node> entry : nextNode.getOptions().entrySet()) {
-                        options.put(entry.getKey(), entry.getValue().getMessage());
-                    }
+                    Map<Integer, String> options = getOptionsAndMessages(nextNode.getOptions());
 
                     return new ChatbotResponse(
                             nextNode.getMessage(),
@@ -133,7 +130,22 @@ public class ChatbotService {
                 return new ChatbotResponse("Opção inválida! Tente novamente.", new HashMap<>(), false, null, uuid);
             }
         }
-
-        return new ChatbotResponse("Sessão não encontrada.", new HashMap<>(), false, null, uuid);
+        return new ChatbotResponse(
+                startNode.getMessage(),
+                getOptionsAndMessages(startNode.getOptions()),
+                false,
+                startNode.getInputPromptMessage(),
+                uuid
+        );
     }
+
+    public Map<Integer, String> getOptionsAndMessages(Map<Integer, Node> nodeOptions) {
+        Map<Integer, String> options = new HashMap<>();
+        for (Map.Entry<Integer, Node> entry : nodeOptions.entrySet()) {
+            options.put(entry.getKey(), entry.getValue().getMessage());
+        }
+        return options;
+    }
+
+
 }
